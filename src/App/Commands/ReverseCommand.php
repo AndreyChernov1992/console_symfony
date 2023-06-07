@@ -2,6 +2,7 @@
 
 namespace Console\App\Commands;
 
+use Console\App\Reverse;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -18,28 +19,11 @@ class ReverseCommand extends Command {
 
     protected function execute(InputInterface  $input, OutputInterface $output) {
 
+        $reverse = new Reverse;
         $file = $input->getArgument("file");
-        file_exists(ROOT . "$file") ? $string = file_get_contents(ROOT . $file) : $string = $file;
+        $string = file_exists(ROOT . "$file") ? file_get_contents(ROOT . $file) : $file;
         $output->writeln("Reversing $string");       
-        $reversedStrings = explode(" ", $string);
-
-        foreach ($reversedStrings as &$word) {
-            $chars = str_split($word, 1);
-            $filteredChars = [];
-            foreach (array_reverse($chars) as $char) {
-                if (ctype_alpha($char)) {
-                    $filteredChars[] = $char;
-                }
-            }
-            foreach ($chars as &$char) {
-                if (!ctype_alpha($char)) {
-                    continue;
-                }
-                $char = array_shift($filteredChars);
-            }
-            $word = implode("", $chars);
-        }
-        $output->writeln(implode(" ", $reversedStrings));
+        $output->writeln($reverse->reverse($string));
         return 0;
     }
 }
